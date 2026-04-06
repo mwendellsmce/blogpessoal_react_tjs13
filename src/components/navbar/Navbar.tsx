@@ -1,26 +1,47 @@
-import { Link } from "react-router-dom"
+import { useContext } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { AuthContext } from "../../contexts/AuthContext" // Confirme se este caminho está correto no seu projeto
 
 function Navbar() {
-  return (
-    <>
-      <div className='w-full flex justify-center py-4 bg-blue-900 text-white'>
-        <div className="container flex justify-between text-lg mx-8">
-          
-          <Link to="/home" className="text-2xl font-bold uppercase">
-            Blog Pessoal
-          </Link>
+    // Objeto responsável por redirecionar o usuário
+    const navigate = useNavigate()
 
-          <div className='flex gap-4'>
-            <div className='hover:underline cursor-pointer'>Postagens</div>
-            <div className='hover:underline cursor-pointer'>Temas</div>
-            <div className='hover:underline cursor-pointer'>Cadastrar tema</div>
-            <div className='hover:underline cursor-pointer'>Perfil</div>
-            <div className='hover:underline cursor-pointer'>Sair</div>
-          </div>
+    // Consumo do contexto
+    // Usamos a desestruturação para selecionar o estado do usuário e a função de logout
+    const { usuario, handleLogout } = useContext(AuthContext)
+
+    function logout() {
+        handleLogout()
+        alert('O usuário foi desconectado com sucesso!')
+        navigate('/')
+    }
+
+    // Se o token estiver vazio (usuário não logado), a Navbar não é renderizada na tela
+    if (usuario.token === "") {
+        return <></>
+    }
+
+    return (
+        <div className='w-full flex justify-center py-4 bg-blue-900 text-white'>
+            <div className="container flex justify-between text-lg mx-8 items-center">
+                
+                <Link to="/home" className="text-2xl font-bold uppercase">
+                    Blog Pessoal
+                </Link>
+
+                <div className='flex gap-4'>
+                    <div className='hover:underline cursor-pointer'>Postagens</div>
+                    <div className='hover:underline cursor-pointer'>Temas</div>
+                    <div className='hover:underline cursor-pointer'>Cadastrar tema</div>
+                    <div className='hover:underline cursor-pointer'>Perfil</div>
+                    
+                    <Link to="" onClick={logout} className='hover:underline cursor-pointer'>
+                        Sair
+                    </Link>
+                </div>
+            </div>
         </div>
-      </div>
-    </>
-  )
+    )
 }
 
 export default Navbar
