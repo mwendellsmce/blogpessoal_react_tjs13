@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type SyntheticEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import type Usuario from "../../models/Usuario";
 import { cadastrarUsuario } from "../../services/Service";
@@ -51,7 +51,7 @@ function Cadastro() {
   }
 
   // funcao para enviar os dados para o backend
-  async function cadastrarNovoUsuario(e: FormEvent<HTMLFormElement>) {
+  async function cadastrarNovoUsuario(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (confirmarSenha === usuario.senha && usuario.senha.length >= 8) {
