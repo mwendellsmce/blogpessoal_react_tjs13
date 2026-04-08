@@ -18,12 +18,12 @@ function DeletarTema() {
 
     async function buscarPorId(id: string) {
         try {
-            setIsLoading(true) // Adicionado para carregar durante a busca
+            setIsLoading(true) 
             await buscar(`/temas/${id}`, setTema, {
                 headers: { Authorization: token }
             })
         } catch (error: any) {
-            if (error.toString().includes('401')) { // Atualizado para 401
+            if (error.toString().includes('401')) { 
                 alert('O token expirou, favor logar novamente')
                 handleLogout()
                 navigate('/login')
@@ -61,7 +61,7 @@ function DeletarTema() {
                 handleLogout()
                 navigate('/login')
             } else {
-                alert('Erro ao apagar o tema.') // Mantido o seu fallback
+                alert('Erro ao apagar o tema.') 
             }
         }
         
