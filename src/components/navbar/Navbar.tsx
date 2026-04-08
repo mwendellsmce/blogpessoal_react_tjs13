@@ -1,13 +1,12 @@
 import { useContext } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { AuthContext } from "../../contexts/AuthContext" // Confirme se este caminho está correto no seu projeto
+import { AuthContext } from "../../contexts/AuthContext"
 
 function Navbar() {
     // Objeto responsável por redirecionar o usuário
     const navigate = useNavigate()
 
     // Consumo do contexto
-    // Usamos a desestruturação para selecionar o estado do usuário e a função de logout
     const { usuario, handleLogout } = useContext(AuthContext)
 
     function logout() {
@@ -30,12 +29,11 @@ function Navbar() {
                 </Link>
 
                 <div className='flex gap-4'>
-                    <div className='hover:underline cursor-pointer'>Postagens</div>
-                    <div className='hover:underline cursor-pointer'>Temas</div>
-                    <div className='hover:underline cursor-pointer'>Cadastrar tema</div>
+                    <Link to='/postagens' className='hover:underline'>Postagens</Link>
+                    <Link to='/temas' className='hover:underline'>Temas</Link>
+                    <Link to='/cadastrarTema' className='hover:underline'>Cadastrar tema</Link>
                     <div className='hover:underline cursor-pointer'>Perfil</div>
-                    
-                    <Link to="" onClick={logout} className='hover:underline cursor-pointer'>
+                    <Link to='' onClick={logout} className='hover:underline'>
                         Sair
                     </Link>
                 </div>
