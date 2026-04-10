@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom"
+import ListaPostagens from "../../components/postagem/listapostagens/ListaPostagens"
+import ModalPostagem from "../../components/postagem/modalpostagem/ModalPostagem"
 
 function Home() {
     return (
@@ -23,18 +24,14 @@ function Home() {
                         </p>
 
                         <div className="flex justify-around gap-4">
-                            {/* O texto agora está envolvido por um Link para a rota de cadastro */}
-                            <Link 
-                                to='/cadastrarPostagem' 
-                                className='rounded text-white border-white border-solid border-2 py-2 px-4 hover:bg-white hover:text-blue-900 cursor-pointer transition-all duration-300'
-                            >
-                                Nova Postagem
-                            </Link>
+                            <ModalPostagem />
                         </div>
                     </div>
 
                 </div>
             </div>
+            {/* Lista renderizada na Home */}
+            <ListaPostagens />
         </>
     )
 }
