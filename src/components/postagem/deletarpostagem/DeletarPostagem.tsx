@@ -4,6 +4,7 @@ import { SyncLoader } from "react-spinners"
 import { AuthContext } from "../../../contexts/AuthContext"
 import type Postagem from "../../../models/Postagem"
 import { buscar, deletar } from "../../../services/Service"
+import { ToastAlert } from "../../../utils/ToastAlert"
 
 function DeletarPostagem() {
     const navigate = useNavigate()
@@ -32,7 +33,7 @@ function DeletarPostagem() {
 
     useEffect(() => {
         if (token === '') {
-            alert('Você precisa estar logado')
+            ToastAlert('Você precisa estar logado', 'info')
             navigate('/')
         }
     }, [token])
@@ -52,12 +53,12 @@ function DeletarPostagem() {
                     'Authorization': token
                 }
             })
-            alert('Postagem apagada com sucesso')
+            ToastAlert('Postagem apagada com sucesso', 'sucesso')
         } catch (error: any) {
             if (error.toString().includes('401')) {
                 handleLogout()
             } else {
-                alert('Erro ao deletar a postagem.')
+                ToastAlert('Erro ao deletar a postagem', 'erro')
             }
         }
 

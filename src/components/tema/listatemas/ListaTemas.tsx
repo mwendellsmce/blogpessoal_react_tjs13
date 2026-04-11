@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
-import { SyncLoader } from 'react-spinners'
 import { useNavigate } from 'react-router-dom'
+import { SyncLoader } from 'react-spinners'
 import { AuthContext } from '../../../contexts/AuthContext'
 import type Tema from '../../../models/Tema'
 import { buscar } from '../../../services/Service'
+import { ToastAlert } from '../../../utils/ToastAlert'
 import CardTema from '../cardtema/CardTema'
 
 function ListaTemas() {
@@ -15,15 +16,13 @@ function ListaTemas() {
     const { usuario, handleLogout } = useContext(AuthContext)
     const token = usuario.token
 
-    // useEffect para monitorar o token e proteger a rota
     useEffect(() => {
         if (token === '') {
-            alert('Você precisa estar logado!')
-            navigate('/') // Redireciona para a raiz (Login)
+            ToastAlert('Você precisa estar logado!', 'info')
+            navigate('/') 
         }
     }, [token])
 
-    // useEffect para inicializar a busca de temas
     useEffect(() => {
         buscarTemas()
     }, [temas.length])
@@ -36,7 +35,7 @@ function ListaTemas() {
             })
         } catch (error: any) {
             if (error.toString().includes('401')) {
-                // Apenas desloga. O useEffect acima detectará a mudança do token e fará o navigate.
+                ToastAlert('O token expirou, favor logar novamente', 'info')
                 handleLogout() 
             }
         } finally {
@@ -46,18 +45,15 @@ function ListaTemas() {
 
     return (
         <>
-            {/* Bloco 01: Loader centralizado enquanto busca dados */}
             {isLoading && (
                 <div className="flex justify-center w-full my-8">
                     <SyncLoader color="#312e81" size={32} />
                 </div>
             )}
 
-            {/* Adicionado o px-4 para responsividade */}
             <div className="flex justify-center w-full px-4 my-4">
                 <div className="container flex flex-col">
                     
-                    {/* Bloco 02: Mensagem caso a lista retorne vazia após o carregamento */}
                     {(!isLoading && temas.length === 0) && (
                         <span className="text-3xl text-center my-8">
                             Nenhum Tema foi encontrado!

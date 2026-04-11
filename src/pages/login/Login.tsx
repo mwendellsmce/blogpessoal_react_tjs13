@@ -1,45 +1,38 @@
-import { useContext, useEffect, useState, type ChangeEvent, type SyntheticEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthContext'; 
-import type UsuarioLogin from '../../models/UsuarioLogin'; 
-import { ClipLoader } from 'react-spinners';
+import { useContext, useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { SyncLoader } from 'react-spinners'
+import { AuthContext } from '../../contexts/AuthContext'
+import type UsuarioLogin from '../../models/UsuarioLogin'
 
 function Login() {
-  
-  const navigate = useNavigate();
-
-  const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>({} as UsuarioLogin);
-
-  const { usuario, handleLogin, isLoading } = useContext(AuthContext);
+  const navigate = useNavigate()
+  const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>({} as UsuarioLogin)
+  const { usuario, handleLogin, isLoading } = useContext(AuthContext)
 
   useEffect(() => {
     if (usuario.token !== '') {
-      navigate('/home');
+      navigate('/home')
     }
-  }, [usuario, navigate]);
+  }, [usuario, navigate])
 
   function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
     setUsuarioLogin({
       ...usuarioLogin,
       [e.target.name]: e.target.value
-    });
+    })
   }
 
-  // Função disparada ao submeter o formulário
-  function login(e: SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault();
-    handleLogin(usuarioLogin);
+  function login(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    handleLogin(usuarioLogin)
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-[80vh] items-center">
-      
       <div className="flex flex-col justify-center items-center p-8">
         <h2 className="text-4xl font-bold mb-8">Entrar</h2>
 
-        {/* Adicionado o onSubmit */}
         <form className="flex flex-col w-full max-w-md gap-4" onSubmit={login}>
-          
           <div className="flex flex-col gap-1">
             <label htmlFor="usuario">Usuário</label>
             <input
@@ -66,12 +59,11 @@ function Login() {
             />
           </div>
 
-          {/* Adicionado o tipo submit e o ClipLoader para manter a padronização */}
           <button 
             type="submit"
             className="bg-blue-900 hover:bg-blue-800 text-white font-bold rounded py-2 mt-4 flex justify-center items-center"
           >
-            {isLoading ? <ClipLoader color="#ffffff" size={24} /> : <span>Entrar</span>}
+            {isLoading ? <SyncLoader color="white" size={8} /> : <span>Entrar</span>}
           </button>
 
           <hr className="border-slate-300 w-full mt-4" />
@@ -82,7 +74,6 @@ function Login() {
               Cadastre-se
             </Link>
           </p>
-
         </form>
       </div>
 
@@ -93,9 +84,8 @@ function Login() {
           className="w-full h-full object-cover"
         />
       </div>
-      
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login

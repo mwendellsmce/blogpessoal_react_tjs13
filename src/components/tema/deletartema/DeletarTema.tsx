@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState, type SyntheticEvent } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { SyncLoader } from "react-spinners"
 import { AuthContext } from "../../../contexts/AuthContext"
 import type Tema from "../../../models/Tema"
 import { buscar, deletar } from "../../../services/Service"
-import { ClipLoader } from "react-spinners"
+import { ToastAlert } from "../../../utils/ToastAlert"
 
 function DeletarTema() {
     const navigate = useNavigate()
@@ -24,18 +25,18 @@ function DeletarTema() {
             })
         } catch (error: any) {
             if (error.toString().includes('401')) { 
-                alert('O token expirou, favor logar novamente')
+                ToastAlert('O token expirou, favor logar novamente', 'info')
                 handleLogout()
                 navigate('/login')
             }
         } finally {
-            setIsLoading(false) // Garante o fim do carregamento
+            setIsLoading(false) 
         }
     }
 
     useEffect(() => {
         if (token === '') {
-            alert('Você precisa estar logado')
+            ToastAlert('Você precisa estar logado', 'info')
             navigate('/login')
         }
     }, [token])
@@ -54,14 +55,14 @@ function DeletarTema() {
             await deletar(`/temas/${id}`, {
                 headers: { Authorization: token }
             })
-            alert('Tema apagado com sucesso')
+            ToastAlert('Tema apagado com sucesso', 'sucesso')
         } catch (error: any) {
-            if (error.toString().includes('401')) { // Atualizado para 401
-                alert('O token expirou, favor logar novamente')
+            if (error.toString().includes('401')) { 
+                ToastAlert('O token expirou, favor logar novamente', 'info')
                 handleLogout()
                 navigate('/login')
             } else {
-                alert('Erro ao apagar o tema.') 
+                ToastAlert('Erro ao apagar o tema.', 'erro') 
             }
         }
         
@@ -80,7 +81,7 @@ function DeletarTema() {
                 Você tem certeza de que deseja apagar o tema a seguir?
             </p>
             <div className='border flex flex-col rounded-2xl overflow-hidden justify-between'>
-                <header className='py-2 px-6 bg-indigo-600 text-white font-bold text-2xl'>
+                <header className='py-2 px-6 bg-blue-900 text-white font-bold text-2xl'>
                     Tema
                 </header>
                 <p className='p-8 text-3xl bg-slate-200 h-full'>{tema.descricao}</p>
@@ -92,11 +93,11 @@ function DeletarTema() {
                         Não
                     </button>
                     <button 
-                        className='w-full text-slate-100 bg-indigo-400 hover:bg-indigo-600 flex items-center justify-center'
+                        className='w-full text-slate-100 bg-blue-500 hover:bg-blue-800 flex items-center justify-center'
                         onClick={(e: SyntheticEvent) => deletarTema(e)}
                     >
                         {isLoading ? (
-                            <ClipLoader color="#ffffff" size={24} />
+                            <SyncLoader color="#ffffff" size={8} />
                         ) : (
                             <span>Sim</span>
                         )}

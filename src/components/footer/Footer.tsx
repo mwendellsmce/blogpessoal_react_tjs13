@@ -1,7 +1,15 @@
 import { FacebookLogoIcon, InstagramLogoIcon, LinkedinLogoIcon } from "@phosphor-icons/react"
+import { useContext } from "react"
+import { AuthContext } from "../../contexts/AuthContext"
 
 function Footer() {
   let data = new Date().getFullYear()
+
+  const { usuario } = useContext(AuthContext)
+
+  if (usuario.token === "") {
+    return <></>
+  }
 
   return (
     <>

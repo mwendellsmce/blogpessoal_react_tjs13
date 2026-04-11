@@ -1,104 +1,103 @@
-import { useContext, useEffect, useState, type ChangeEvent, type SyntheticEvent } from "react"
+import { useContext, useEffect, useState, type ChangeEvent, type FormEvent } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { SyncLoader } from "react-spinners"
 import { AuthContext } from "../../../contexts/AuthContext"
 import type Tema from "../../../models/Tema"
 import { atualizar, buscar, cadastrar } from "../../../services/Service"
-import { ClipLoader } from "react-spinners"
+import { ToastAlert } from "../../../utils/ToastAlert"
 
 function FormTema() {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
     
-    // Mantivemos a SUA inicialização segura do estado
-    const [tema, setTema] = useState<Tema>({ id: 0, descricao: '' });
+    const [tema, setTema] = useState<Tema>({ id: 0, descricao: '' })
 
-    const { id } = useParams<{ id: string }>();
+    const { id } = useParams<{ id: string }>()
 
-    const { usuario, handleLogout } = useContext(AuthContext);
-    const token = usuario.token;
+    const { usuario, handleLogout } = useContext(AuthContext)
+    const token = usuario.token
 
-    // Atualizado com o padrão de loader e erro 401 do professor
     async function buscarTemaPorId() {
         try {
-            setIsLoading(true);
+            setIsLoading(true)
             await buscar(`/temas/${id}`, setTema, {
                 headers: { Authorization: token },
-            });
+            })
         } catch (error: any) {
             if (error.toString().includes('401')) {
-                alert('O token expirou, favor logar novamente');
-                handleLogout();
-                navigate('/login');
+                ToastAlert('O token expirou, favor logar novamente', 'info')
+                handleLogout()
+                navigate('/login')
             }
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     }
 
     useEffect(() => {
         if (token === '') {
-            alert('Você precisa estar logado');
-            navigate('/login');
+            ToastAlert('Você precisa estar logado', 'info')
+            navigate('/login')
         }
-    }, [token]);
+    }, [token])
 
     useEffect(() => {
         if (id !== undefined) {
-            buscarTemaPorId();
+            buscarTemaPorId()
         }
-    }, [id]);
+    }, [id])
 
     function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
         setTema({
             ...tema,
             [e.target.name]: e.target.value,
-        });
+        })
     }
 
-    async function gerarNovoTema(e: SyntheticEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setIsLoading(true);
+    async function gerarNovoTema(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        setIsLoading(true)
 
         if (id !== undefined) {
             try {
                 await atualizar(`/temas`, tema, setTema, {
                     headers: { 'Authorization': token },
-                });
-                alert('Tema atualizado com sucesso');
-                retornar();
+                })
+                ToastAlert('Tema atualizado com sucesso', 'sucesso')
+                retornar()
             } catch (error: any) {
-                if (error.toString().includes('401')) { // Atualizado para 401
-                    alert('O token expirou, favor logar novamente');
-                    handleLogout();
-                    navigate('/login');
+                if (error.toString().includes('401')) {
+                    ToastAlert('O token expirou, favor logar novamente', 'info')
+                    handleLogout()
+                    navigate('/login')
                 } else {
-                    alert('Erro ao atualizar o Tema');
+                    ToastAlert('Erro ao atualizar o Tema', 'erro')
                 }
             }
         } else {
             try {
                 await cadastrar(`/temas`, tema, setTema, {
                     headers: { 'Authorization': token },
-                });
-                alert('Tema cadastrado com sucesso');
-                retornar();
+                })
+                ToastAlert('Tema cadastrado com sucesso', 'sucesso')
+                retornar()
             } catch (error: any) {
-                if (error.toString().includes('401')) { // Atualizado para 401
-                    alert('O token expirou, favor logar novamente');
-                    handleLogout();
-                    navigate('/login');
+                if (error.toString().includes('401')) {
+                    ToastAlert('O token expirou, favor logar novamente', 'info')
+                    handleLogout()
+                    navigate('/login')
                 } else {
-                    alert('Erro ao cadastrar o Tema');
+                    ToastAlert('Erro ao cadastrar o Tema', 'erro')
                 }
             }
         }
 
-        setIsLoading(false);
+        setIsLoading(false)
     }
 
     function retornar() {
-        navigate("/temas");
+        navigate("/temas")
     }
 
     return (
@@ -120,18 +119,18 @@ function FormTema() {
                     />
                 </div>
                 <button
-                    className="rounded text-slate-100 bg-indigo-400 hover:bg-indigo-800 w-1/2 py-2 mx-auto flex justify-center"
+                    className="rounded text-slate-100 bg-blue-500 hover:bg-blue-800 w-1/2 py-2 mx-auto flex justify-center"
                     type="submit"
                 >
                     {isLoading ? (
-                        <ClipLoader color="#ffffff" size={24} />
+                        <SyncLoader color="#ffffff" size={8} />
                     ) : (
                         <span>{id !== undefined ? 'Atualizar' : 'Cadastrar'}</span>
                     )}
                 </button>
             </form>
         </div>
-    );
+    )
 }
 
-export default FormTema;
+export default FormTema

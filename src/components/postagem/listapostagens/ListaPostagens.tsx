@@ -1,46 +1,48 @@
-import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { SyncLoader } from "react-spinners";
-import { AuthContext } from "../../../contexts/AuthContext";
-import type Postagem from "../../../models/Postagem";
-import { buscar } from "../../../services/Service";
-import CardPostagem from "../cardpostagem/CardPostagem";
+import { useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { SyncLoader } from "react-spinners"
+import { AuthContext } from "../../../contexts/AuthContext"
+import type Postagem from "../../../models/Postagem"
+import { buscar } from "../../../services/Service"
+import { ToastAlert } from "../../../utils/ToastAlert"
+import CardPostagem from "../cardpostagem/CardPostagem"
 
 function ListaPostagens() {
-    const navigate = useNavigate();
-    const [postagens, setPostagens] = useState<Postagem[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const navigate = useNavigate()
+    const [postagens, setPostagens] = useState<Postagem[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const { usuario, handleLogout } = useContext(AuthContext);
-    const token = usuario.token;
+    const { usuario, handleLogout } = useContext(AuthContext)
+    const token = usuario.token
 
     // Redireciona para o login se o token estiver vazio
     useEffect(() => {
         if (token === '') {
-            alert('Você precisa estar logado!');
-            navigate('/');
+            ToastAlert('Você precisa estar logado!', 'info')
+            navigate('/')
         }
-    }, [token, navigate]);
+    }, [token, navigate])
 
     // Busca as postagens ao renderizar o componente
     useEffect(() => {
         if (token !== '') {
-            buscarPostagens();
+            buscarPostagens()
         }
-    }, [postagens.length, token]);
+    }, [postagens.length, token])
 
     async function buscarPostagens() {
-        setIsLoading(true);
+        setIsLoading(true)
         try {
             await buscar('/postagens', setPostagens, {
                 headers: { Authorization: token }
-            });
+            })
         } catch (error: any) {
             if (error.toString().includes('401')) {
-                handleLogout();
+                ToastAlert('O token expirou, favor logar novamente', 'info')
+                handleLogout()
             }
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     }
 
@@ -69,7 +71,7 @@ function ListaPostagens() {
                 </div>
             </div>
         </>
-    );
+    )
 }
 
 export default ListaPostagens

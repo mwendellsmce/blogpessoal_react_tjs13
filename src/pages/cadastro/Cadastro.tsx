@@ -1,21 +1,14 @@
-import { useEffect, useState, type ChangeEvent, type SyntheticEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import type Usuario from "../../models/Usuario";
-import { cadastrarUsuario } from "../../services/Service";
-import { ClipLoader } from "react-spinners";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react"
+import { useNavigate } from "react-router-dom"
+import { SyncLoader } from "react-spinners"
+import type Usuario from "../../models/Usuario"
+import { cadastrarUsuario } from "../../services/Service"
+import { ToastAlert } from "../../utils/ToastAlert"
 
 function Cadastro() {
-
-  // Objeto responsavel por redirecionar o usuario para uma outra rota
   const navigate = useNavigate()
-
-  // estado para controlar o Loader (animação de carregamento)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  // estado para confirmar a senha digitada pelo user
   const [confirmarSenha, setConfirmarSenha] = useState<string>('')
-
-  // estado usuario para armazenar os dados do usuario que sera cadastrado
   const [usuario, setUsuario] = useState<Usuario>({
     id: 0,
     nome: '',
@@ -24,15 +17,12 @@ function Cadastro() {
     foto: ''
   })
 
-  // useEffect que vai controlar o redirecionamento para a pagina de login
-  // caso o cadastro seja bem sucedido (quando o ID deixa de ser 0)
   useEffect(() => {
     if (usuario.id !== 0) {
       retornar()
     }
   }, [usuario])
 
-  // funcao de atualizacao do estado usuario
   function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
     setUsuario({
       ...usuario,
@@ -40,30 +30,27 @@ function Cadastro() {
     })
   }
 
-  // funcao de atualizacao do estado confirmarSenha
   function handleConfirmarSenha(e: ChangeEvent<HTMLInputElement>) {
     setConfirmarSenha(e.target.value)
   }
 
-  // Função para navegar de volta (usada pelo useEffect e pelo botão cancelar)
   function retornar() {
     navigate('/login')
   }
 
-  // funcao para enviar os dados para o backend
-  async function cadastrarNovoUsuario(e: SyntheticEvent<HTMLFormElement>) {
+  async function cadastrarNovoUsuario(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (confirmarSenha === usuario.senha && usuario.senha.length >= 8) {
       setIsLoading(true)
       try {
         await cadastrarUsuario('/usuarios/cadastrar', usuario, setUsuario)
-        alert('Usuario Cadastrado com sucesso!')
+        ToastAlert('Usuário cadastrado com sucesso!', 'sucesso')
       } catch (error) {
-        alert('Erro ao cadastrar usuario')
+        ToastAlert('Erro ao cadastrar usuário', 'erro')
       }
     } else {
-      alert('Dados do usuario inconsistentes! Verifique a senha (mínimo 8 caracteres).')
+      ToastAlert('Dados do usuário inconsistentes! Verifique a senha.', 'erro')
       setUsuario({
         ...usuario,
         senha: ''
@@ -74,10 +61,7 @@ function Cadastro() {
   }
 
   return (
-    /* CONTAINER PAI: Define a grade de 2 colunas no PC (md:grid-cols-2) */
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-[80vh]">
-
-      {/* ---------------- LADO ESQUERDO: IMAGEM ---------------- */}
       <div className="hidden md:block">
         <img
           src="https://i.imgur.com/fyfri1v.png"
@@ -86,12 +70,10 @@ function Cadastro() {
         />
       </div>
 
-      {/* ---------------- LADO DIREITO: FORMULÁRIO ---------------- */}
       <div className="flex flex-col justify-center items-center p-8">
         <h2 className="text-4xl font-bold mb-8">Cadastrar</h2>
 
         <form className="flex flex-col w-full max-w-md gap-4" onSubmit={cadastrarNovoUsuario}>
-
           <div className="flex flex-col gap-1">
             <label htmlFor="nome">Nome</label>
             <input
@@ -157,7 +139,6 @@ function Cadastro() {
             />
           </div>
 
-          {/* ÁREA DOS BOTÕES */}
           <div className="flex justify-around mt-4 gap-4">
             <button
               type="button"
@@ -172,13 +153,12 @@ function Cadastro() {
             >
               {
                 isLoading ?
-                  <ClipLoader color="#ffffff" size={24} />
+                  <SyncLoader color="white" size={8} />
                 :
                   <span>Cadastrar</span>
               }
             </button>
           </div>
-
         </form>
       </div>
     </div>
