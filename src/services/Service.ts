@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // cria uma nova instancia do Axios
-const api = axios.create({
-    baseURL: 'https://blogpessoal-tsj13.onrender.com'
+export const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL
 })
 
 // funcao para cadastrar usuario
